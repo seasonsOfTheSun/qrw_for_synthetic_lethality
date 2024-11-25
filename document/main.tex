@@ -1,0 +1,144 @@
+\documentclass[a4paper,english]{article}
+
+\setlength{\parskip}{\baselineskip}
+
+%% Use utf-8 encoding for foreign characters
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{babel}
+
+%% Vector based fonts instead of bitmaps
+\usepackage{lmodern}
+
+%% Useful
+%\usepackage{fullpage} % Smaller margins
+\usepackage{enumerate}
+
+\usepackage{graphicx}
+
+%% Theorem
+\usepackage{amsthm}
+
+%% Quantum
+\usepackage{braket}
+
+%% More math
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\graphicspath{  }
+
+%% Document Header
+\title{}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Biological Background}
+
+Establishing cause and effect in biology is rarely simple. 
+Often when we have  found what we think is a necessary and sufficient precondition for a disease phenotype, like a mutation or drug effect, 
+it eventually transpires that reality is far less clear cut.
+ One major reason for this is the existence of interactions between different modules and pathways within cellular processes. 
+In experiments on model organisms, in the genetics of human disease, 
+and in the somatic mutations that either promote or inhibit the proliferation of malignant cells, 
+we see that the effects of a mutation can be drastically modulated by its context. 
+
+
+One of the more well formalized forms of interaction is \em{synthetic rescue}.
+When the activity of one module or pathway within the cell's mechanisms 
+can partially or completely compensate for the complete ablation of another, 
+and both need to be inactivated in order to see any phenotype. 
+
+
+
+
+
+\section{Problem Formulation}
+
+
+
+% we construct a simple model of human disease and the PPI
+
+% There are two modules associated with a disease
+% each of the modules contains multiple genes
+% each patient has a set of mutated genes
+% if even one of the genes in a disease module is mutated, that module is considered nonfunctional
+% a patient has the disease if and only if both of the modules are nonfunctional
+
+We present a toy model of synthetic rescue and the PPI, in order to illustrate how to .
+In this model there is a fixed set of genes which in every individual (henceforth referred to as a 'patient') is mutated or left unchanged at random. 
+Each patient's characteristics is completely determined by their set of mutations. 
+
+Some of the genes are collected together in sets called  \em{gene modules}, each of which corresponds to some cellular function or pathway. 
+Each module is considered \em{non-functional}, if at least $k$ of the genes in that module are mutated. (In all of the following we will assume $k$=1,
+ but we leave room for generalization)  
+ Two of these gene modules are selected and are called the disease modules.
+  A patient is considered to \em{have the disease} if both of the disease modules are non-functional.%We present a toy model of synthetic rescue and the PPI, in order to illustrate how to .
+
+% this is all happening on a PPI, by the way
+% The disease modules are densely connected in the PPI
+
+
+The problem we are trying to solve essentially has two components %that are challenging on their own
+
+\begin{enumerate}
+    \item We do not know the true modules
+    \item We would still have a quadratic search problem even if we did know them
+\end{enumerate}
+
+$$ $$
+% Grover's algorithm let's us look for things
+% Grover's algorithm on a network let's us look for ...
+% special nodes in regions of special nodes
+% double random walks let us look for special pairs of nodes
+% in regions of special pairs of nodes
+% We just need to specify an interaction hamiltonian
+%  that behaves differently on such pairs of nodes
+
+
+\section{Combinatorics and Linear Algebra}
+
+% we can see that the 
+$$ (\bra{i} \otimes \bra{j}) (\ket{D_1} \otimes \ket{D_2}) = 
+\begin{cases}
+    1,              & \text{if } i \in  D_1 \text{and}  j \in D_2\\
+    0,              & \text{otherwise}
+\end{cases}
+ $$
+
+
+
+%
+%
+
+%
+
+$$ $$
+
+\section{Disease Modules and The Symmetric Adjacency Matrix Eigenvectors}
+
+% we don't know the exact real modules
+% Eigenvectors often capture modules in networks
+% This makes sense ebecause of property of the laplacian
+% Here's some diagrams showing how it's true visually
+% This means that we can build
+
+\section{Construction of the Interaction Hamiltonian}
+
+\subsection{}
+%
+%
+%
+
+$$ \sum_{S_k} \sum_{i,j \in S_k} (\ket{i} \otimes \ket{j})(\bra{i} \otimes \bra{j})  $$
+\subsection{}
+\subsection{}
+
+
+\section{Experimental Results}
+
+
+\end{document}
