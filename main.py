@@ -168,7 +168,7 @@ class PatientInteractionMatrix:
         
     def bilinear_form_magnitude(self,v,w):
         """ Applies the patient matrix as bilinear form,
-        calculating (<v| \tensor <w|) A (|v> \tensor |w>)
+        calculating (<v| \ tensor <w|) A (|v> \ tensor |w>)
         where A is the patient-specific interaction matrix
         held by this PatientInteractionMatrix object """
         out = 0
@@ -192,7 +192,7 @@ class DataInteractionMatrix:
     def __init__(self,nodelist,mutations,disease_statuses,patient_weighting_map=None):
         """ 
         Creates a matr}ix of the form
-        sum_{patients} weight{patient} sum_{ij} (|i> \tensor |j>)(<i| \tensor <j|)
+        sum_{patients} weight{patient} sum_{ij} (|i> \ tensor |j>)(<i| \ tensor <j|)
         where i,j are all pairs of genes in a particual patient,
         summed over all the patients selected, and a weight is 
         given according to whether the patirnt has the disease or not.
@@ -215,7 +215,7 @@ class DataInteractionMatrix:
              
         
     def bilinear_form_magnitude(self,v,w):
-        """ Applies the data matrix as bilinear form (<v| \tensor <w|) A (|v> \tensor |w>)  """
+        """ Applies the data matrix as bilinear form (<v| \ tensor <w|) A (|v> \ tensor |w>)  """
         out = 0
         for pim,weight in zip(self.patient_interaction_matrices,
                          self.patient_weightings):
@@ -332,7 +332,7 @@ class PPI:
     
     def __init__(self,gt,
                  p_inter,p_intra):
-        """ Helper class for generating simulated PPI Objects
+        """ Helper class for generating simulated PPI Networks
 
         Args:
             gt (GroundTruth): An object that holds info about the disease modules and total genes in the model
