@@ -2,6 +2,9 @@
 
 \setlength{\parskip}{\baselineskip}
 
+%% 
+\usepackage{listings}
+
 %% Use utf-8 encoding for foreign characters
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -26,6 +29,32 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 
+
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+
+
 \graphicspath{  }
 
 %% Document Header
@@ -36,12 +65,14 @@
 \begin{document}
 \maketitle
 
-\section{Biological Background}
+
+\section{Introduction}
+\subsection{Biological Background}
 
 Establishing cause and effect in biology is rarely simple. 
 Often when we have  found what we think is a necessary and sufficient precondition for a disease phenotype, like a mutation or drug effect, 
 it eventually transpires that reality is far less clear cut.
- One major reason for this is the existence of interactions between different modules and pathways within cellular processes. 
+One major reason for this is the existence of interactions between different modules and pathways within cellular processes. 
 In experiments on model organisms, in the genetics of human disease, 
 and in the somatic mutations that either promote or inhibit the proliferation of malignant cells, 
 we see that the effects of a mutation can be drastically modulated by its context. 
@@ -55,33 +86,6 @@ and both need to be inactivated in order to see any phenotype.
 
 
 
-
-\section{Problem Formulation}
-
-
-
-% we construct a simple model of human disease and the PPI
-
-% There are two modules associated with a disease
-% each of the modules contains multiple genes
-% each patient has a set of mutated genes
-% if even one of the genes in a disease module is mutated, that module is considered nonfunctional
-% a patient has the disease if and only if both of the modules are nonfunctional
-
-We present a toy model of synthetic rescue and the PPI, in order to illustrate how to .
-In this model there is a fixed set of genes which in every individual (henceforth referred to as a 'patient') is mutated or left unchanged at random. 
-Each patient's characteristics is completely determined by their set of mutations. 
-
-Some of the genes are collected together in sets called  \em{gene modules}, each of which corresponds to some cellular function or pathway. 
-Each module is considered \em{non-functional}, if at least $k$ of the genes in that module are mutated. (In all of the following we will assume $k$=1,
- but we leave room for generalization)  
- Two of these gene modules are selected and are called the disease modules.
-  A patient is considered to \em{have the disease} if both of the disease modules are non-functional.%We present a toy model of synthetic rescue and the PPI, in order to illustrate how to .
-
-% this is all happening on a PPI, by the way
-% The disease modules are densely connected in the PPI
-
-
 The problem we are trying to solve essentially has two components %that are challenging on their own
 
 \begin{enumerate}
@@ -89,7 +93,16 @@ The problem we are trying to solve essentially has two components %that are chal
     \item We would still have a quadratic search problem even if we did know them
 \end{enumerate}
 
-$$ $$
+
+
+\subsection{QRW and Grover's Algorithm}
+% why hard to solve classically
+% find a diversity of eigenvectors
+% because factorizing n² by n² matrices is prohibitive
+% Quantum should be better than classical by analogy with grover's
+% why is there no classical analogue of Grover's
+
+
 % Grover's algorithm let's us look for things
 % Grover's algorithm on a network let's us look for ...
 % special nodes in regions of special nodes
@@ -99,9 +112,215 @@ $$ $$
 %  that behaves differently on such pairs of nodes
 
 
-\section{Combinatorics and Linear Algebra}
 
-% we can see that the 
+\section{Methods}
+
+\section{}
+
+
+
+
+
+
+\subsection{Toy Model of Synthetic Interaction}
+
+% we construct a simple model of human disease and the PPI
+
+% There are two modules associated with a disease
+% each of the modules contains multiple genes
+% each patient has a set of mutated genes
+% if even one of the genes in a disease module is mutated, that module is considered nonfunctional
+% a patient has the disease if and only if both of the modules are nonfunctional
+
+
+% this is all happening on a PPI
+% The disease modules are densely connected in the PPI
+
+
+In this section we simulate a model of genetic disease , which is as simple as possible 
+while still modelling synthetic lethality, disease modules,
+ and their characteristic behavior on the PPI.
+
+in order to illustrate how to .
+In this model there is a fixed set of genes which in every individual (henceforth referred to as a 'patient') is mutated or left unchanged at random. 
+Each patient's characteristics is completely determined by their set of mutations. 
+
+Some of the genes are collected together in sets called  \em{gene modules}, each of which corresponds to some cellular function or pathway. 
+Each module is considered \em{non-functional}, if at least $k$ of the genes in that module are mutated. (In all of the following we will assume $k$=1,
+ but we leave room for generalization)  
+ Two of these gene modules are selected and are called the disease modules.
+  A patient is considered to \em{have the disease} if both of the disease modules are non-functional.%We present a toy model of synthetic rescue and the PPI, in order to illustrate how to .
+
+\subsection{Model of Disease Etiology}
+  Here we create a toy model that simulates some features of genetic disease etiology,in partiular the synthetic lethality of mutations.
+      
+  
+Modules and Disease Definition
+  
+  We consider a set of **genes**, some of which are grouped into disjoint (non-overlapping) **gene modules**, two of which are arbitrarily chosen to be the ground truth **disease modules**.  Each disease module which has a specified **threshold** number of mutations, beyond which it is considered to be **inactivated**. If for a given set of mutated genes, *both* disease modules are inactivated, then the set of mutations causes **disease**
+  
+  
+\begin{lstlisting}
+  n_modules,module_size,total_genes = 30,10,1000
+  gt = GroundTruth(n_modules,module_size,total_genes)
+  gene_list = list(gt.genes)
+  gt.generate_disease_combinatorics()
+\end{lstlisting}
+  
+\subsection{PPI / Gene Similarity Network}
+  
+  We randomly generate a network with the genes as nodes, which we call the **PPI**. We want to capture the idea that, like in the real PPI, genes of similar function are connected by a link. So we specify a probability $p_{\mathrm{intra}}$ of genes within a module having a link between them, and a probability $p_{\mathrm{inter}}$ of genes not in the same module having a link between them, and generate the links with independent Bernoulli trials (coin flips). 
+  
+  Note that not every gene in the network is necessarily in a module, and the disease modules are not treated in any way differently then the non-disease gene modules.
+  
+\begin{lstlisting}
+  p_inter,p_intra = 0.02,1.0
+  gt.ppi = PPI(gt,p_inter,p_intra)
+\end{lstlisting}
+  
+\subsection{Patient Dataset}
+  
+  Given this specified ground truth, we simulate a population of **patients** who may or may not have the disease, by sampling a selection of the genes for each patient, and considering the selected set to be the set of **mutations** for that patient.
+  
+  Using the previously specified ground truth, we determine if each of the patients **has the disease or not**. This gives us a table of mutations and disease statuses, replicating the kind of data we have in order to discover causal mutations  in real life.
+
+\begin{lstlisting}
+  mutation_p = 0.2
+  n_patients = 200
+      
+  all_patient_mutations = []
+  all_disease_statuses = []
+  
+  for i in range(n_patients):
+          patient_mutations = gt.simulate_mutations(mutation_p)
+          patient_disease_status = gt.check_disease_status(patient_mutations)
+          
+      all_patient_mutations.append(patient_mutations)
+      all_disease_statuses.append(patient_disease_status)
+\end{lstlisting}
+\subsection{Recovering the Ground Truth from Simulated Patient Data}
+  
+  Given access only to this simulated patient data in the form of mutations and corresponding disease status, we would like to see if we can recover the ground truth disease modules. To this end we use it  a matrix on the space $V \otimes V$ that can 'detect' the relevant disease modules in some sense specified further below. The matrix is given by
+  
+  $$ \sum_{k} w_k \sum_{i \neq j \in M_k} (|i\rangle \otimes | j \rangle) (\langle i|\otimes \langle j |)  $$
+  
+  Where 
+  * $k$ is the patient, 
+  * $M_k$ is the patient $k$'s specific set of mutations, and
+  * $w_k$ is a weighting that depends on the patient's disease status
+  * $|i\rangle$ is the element of $V$ in which the node $i$ is given value $1$ and all others $0$.
+  
+  
+  
+  
+  
+  
+\begin{lstlisting}
+  H = DataInteractionMatrix(
+                          gene_list,
+                          all_patient_mutations,
+                          all_disease_statuses
+                          )
+\end{lstlisting}
+  
+  
+\subsection{ Recovering Disease Modules from all the Gene Modules}
+  
+  We first check that we can recover the chosen disease modules from the full list of gene modules. 
+  
+This is substantially easier than the problem faced in reality, and fact itreduces to a simple (albeit potentially intractible) combinatorial search. 
+  
+  However, we can use this case to test the utility of the previously constructed matrix $M$ can be shown by the fact that, at least for some parameters of the network and ground truth,
+  
+  $$ (\langle G_i|\otimes \langle G_j |)
+   | M |  (|G_i\rangle \otimes | G_j \rangle)
+  $$
+  
+  is largest by an overwhelming margin when $G_i$ and $G_j$ are the true disease modules, amongst all $G_i \neq G_j$.
+  
+
+\begin{lstlisting}
+  out=np.zeros((n_modules,n_modules))
+  for i,j in it.product(range(n_modules),repeat=2):
+      module_1,module_2 = gt.modules[i],gt.modules[j]
+      v = np.array([int(i in module_1) for i in gene_list])
+      w = np.array([int(i in module_2) for i in gene_list])
+      out[i,j] = H.bilinear_form_magnitude(v,w)
+      
+  module_inner_products = pd.DataFrame(out,
+  columns=[f"Module-{i}" for i in range(n_modules)],
+  index=[f"Module-{i}" for i in range(n_modules)]) 
+\end{lstlisting}
+
+  
+  
+  \subsection{ Recovering Disease Modules from the PPI}
+  
+  However, in reality, we don't actually have access to the the true gene modules, let alone know
+  which of them are the disease gene modules. However, we have the PPI, and the guiding principle that gene modules frequently form dense clusters within the PPI. Connected clusters of nodes in a network are often highlighted 
+  as high-eigenvalue eigenvectors of the adjacency matrix. 
+  
+  
+  So with this in mind, we take we calculate the Symmetric-Normalized Adjacency Eigenvectors for the PPI network. We choose the Symmetric-Normalized Adjacency because this is the adjacency matrix that forms the principal terms of the Hamiltonian of the QRW.
+  
+  $$ A\otimes I + I \otimes A + H_{\mathrm{int}}$$
+  
+  Hence it makes sense to construct the behaviour of the putative interaction Hamiltonian $H_{\mathrm{int}}$ to have specific effects on the vectors  of the form |$v_\lambda \rangle \otimes | v_\mu \rangle$, as these will already have large eigenvector $\lambda + \mu$, a prominent role in the long term beahvious of the random walk, and the role of $H_{\mathrm{int}}$ will be to adjust their relative prominence. 
+  
+  
+  
+  
+  
+\begin{lstlisting}
+  n_evecs = 10
+  adjacency = nx.adjacency_matrix(gt.ppi.network,nodelist=gt.ppi.nodelist)
+  evalues,evecs = calculate_evecs(adjacency,n_evecs
+                                      )
+  evecs = pd.DataFrame(evecs,
+      columns=[f"Eigenvector-{i}" for i in range(n_evecs)],
+                   index=gene_list)
+  evecs = evecs/np.linalg.norm(evecs,axis=0)
+  
+  out = []
+  for i in range(n_modules):
+      module = gt.modules[i]
+      v = np.array([int(i in module) for i in gene_list])
+          out.append(evecs.T @ v)
+      
+      eigenvector_module_loadings = pd.DataFrame(out,
+                      columns=[f"Eigenvector-{i}" for i in range(n_evecs)],index=[f"Module-{i}" for i in range(n_modules)]).T
+\end{lstlisting}
+  
+  
+  
+  As in the case with the gene modules,  the matrix $M$ can be shown (at leasrt for some parameters of the PPI and ground truth construction, and when the PPI eigenvectors contain good representatives of the modules) to have the property that 
+  
+  $$ (\langle v_\lambda |\otimes \langle  v_\mu |)
+   | M |  (|v_\lambda \rangle \otimes | v_\mu \rangle)
+  $$
+  
+  is largest by an overwhelming margin when $v_\lambda$ and $v_\mu$ are the eigenvectors which correlate most strongly with the true disease modules, amongst all $v_\lambda \neq v_\mu$.
+  
+  
+  
+  
+  
+  
+\begin{lstlisting}
+  out=np.zeros((n_evecs,n_evecs))
+  for i,j in it.product(range(n_evecs),repeat=2):
+  
+      v=evecs[:,i]
+      w=evecs[:,j]
+  
+      out[i,j] = H.bilinear_form_magnitude(v,w)
+      
+      eigenvector_inner_products = pd.DataFrame(out,columns=[f"Eigenvector-{i}" for i in range(n_evecs)],index=[f"Eigenvector-{i}" for i in range(n_evecs)]) 
+\end{lstlisting}
+  
+\subsection{Combinatorics and Linear Algebra}
+
+% 
 $$ (\bra{i} \otimes \bra{j}) (\ket{D_1} \otimes \ket{D_2}) = 
 \begin{cases}
     1,              & \text{if } i \in  D_1 \text{and}  j \in D_2\\
@@ -126,7 +345,9 @@ $$ $$
 % Here's some diagrams showing how it's true visually
 % This means that we can build
 
-\section{Construction of the Interaction Hamiltonian}
+\subsection{Construction of the Interaction Hamiltonian}
+
+
 
 \subsection{}
 %
@@ -138,7 +359,12 @@ $$ \sum_{S_k} \sum_{i,j \in S_k} (\ket{i} \otimes \ket{j})(\bra{i} \otimes \bra{
 \subsection{}
 
 
-\section{Experimental Results}
+\section{Results}
 
+\section{Discussion}
 
 \end{document}
+
+% connects modularity and epistasis:
+% https://pmc.ncbi.nlm.nih.gov/articles/PMC3441082/
+
