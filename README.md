@@ -108,15 +108,17 @@ index=[f"Module-{i}" for i in range(n_modules)])
 ## From the PPI
 
 However, in reality, we don't actually have access to the the true gene modules, let alone know
-which of them are the disease gene modules. However, we have the PPI, and the guiding principle that gene modules frequently form dense clusters within the PPI. Connected clusters of nodes in a network are often highlighted 
+which of them are the true disease gene modules. However, we have the PPI, and the guiding principle that gene modules frequently form dense clusters within the PPI.
+Connected clusters of nodes in a network are often highlighted 
 as high-eigenvalue eigenvectors of the adjacency matrix. 
 
 
-So with this in mind, we take we calculate the Symmetric-Normalized Adjacency Eigenvectors for the PPI network. We choose the Symmetric-Normalized Adjacency because this is the adjacency matrix that forms the principal terms of the Hamiltonian of the QRW.
+So with this in mind, we take we calculate the Symmetric-Normalized Adjacency Eigenvectors for the simulated PPI network.
+We choose the Symmetric-Normalized Adjacency because this is the adjacency matrix $A$ that forms the principal terms of the Hamiltonian of the QRW.
 
 $$ A\otimes I + I \otimes A + H_{\mathrm{int}}$$
 
-Hence it makes sense to construct the behaviour of the putative interaction Hamiltonian $H_{\mathrm{int}}$ to have specific effects on the vectors  of the form |$v_\lambda \rangle \otimes | v_\mu \rangle$, as these will already have large eigenvector $\lambda + \mu$, a prominent role in the long term beahvious of the random walk, and the role of $H_{\mathrm{int}}$ will be to adjust their relative prominence. 
+Hence it makes sense to construct the behaviour of the putative interaction Hamiltonian $H_{\mathrm{int}}$ to have specific effects on the vectors  of the form $ |v_\lambda \rangle \otimes | v_\mu \rangle$, as these will already have large eigenvector $\lambda + \mu$, a prominent role in the long term beahvious of the random walk, and the role of $H_{\mathrm{int}}$ will be to adjust their relative prominence. 
 
 
 
@@ -145,7 +147,7 @@ for i in range(n_modules):
 
 
 
-As in the case with the gene modules,  the matrix $M$ can be shown (at leasrt for some parameters of the PPI and ground truth construction, and when the PPI eigenvectors contain good representatives of the modules) to have the property that 
+As in the case with the gene modules,  the matrix $M$ can be shown (at least for some parameters of the PPI and ground truth construction, and when the PPI eigenvectors contain good representatives of the modules) to have the property that 
 
 $$ (\langle v_\lambda |\otimes \langle  v_\mu |)
  | M |  (|v_\lambda \rangle \otimes | v_\mu \rangle)
