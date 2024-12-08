@@ -10,7 +10,7 @@ from eigenvectors import calculate_evecs
 
 def main():
 
-    folder = "data/intermediate/fourth_large"
+    folder = "data/intermediate/test"
 
     # here we create a simulation that models some features
     # of real disease etitology.
@@ -18,8 +18,8 @@ def main():
     # we consider an arbitrary network genes,
     # and some number of gene modules of constant size
     # n_modules,module_size,total_genes = 10,10,200
-    n_modules, module_size, total_genes = 30, 10, 1000
-    gt = GroundTruth(n_modules, module_size, total_genes)
+    module_size, n_modules, total_genes = 30, 10, 1000
+    gt = GroundTruth(module_size, n_modules, total_genes)
     gene_list = list(gt.genes)
 
     # determines the characteristics of the
@@ -62,7 +62,15 @@ def main():
     # that calculates the behaviour
     # of a matrix that can hopefully be modified into
     # and interaction Hamiltonian.
-    H = DataInteractionMatrix(gene_list, all_patient_mutations, all_disease_statuses)
+    data_interaction_matrix = DataInteractionMatrix(gene_list, all_patient_mutations, all_disease_statuses)
+    
+    self_attraction_matrix = SelfAttractionMatrix(gene_list)
+    
+    H = SumMatrix([data_interaction_matrix,self_attraction_matrix], [1.0,-1.0])
+    
+    #H.as_scipy_sparse_matrix()
+    
+    
 
     # Calculates the Symmetric-Normalized Adjacency Eigenvectors
     n_evecs = 10
@@ -79,11 +87,10 @@ def main():
     df = df / np.linalg.norm(evecs, axis=0)
     df.to_csv(f"{folder}/evecs.csv")
 
-    # The inner products between the modules in the constructed matrix,
-    # showing how the two disease modules (tensored together) have a much higher
+    # show how the two disease modules (tensored together) have a much higher
     # value in <(module tensor module) | M |(module tensor module)> than the others
     out = np.zeros((n_modules, n_modules))
-    for i, j in it.product(range(n_modules), repeat=2):
+    for i, j in it.product(range(gt.n_modules), repeat=2):
         module_1, module_2 = gt.modules[i], gt.modules[j]
         v = np.array([int(i in module_1) for i in gene_list])
         w = np.array([int(i in module_2) for i in gene_list])
@@ -115,7 +122,7 @@ def main():
     # showing how the two PPI evectors representing the modules (tensored together) have a much higher
     # value in <(evec tensor evec) | M |(evec tensor evec)> than the others
     out = []
-    for i in range(n_modules):
+    for i in range(gt.n_modules):
         module = gt.modules[i]
         v = np.array([int(i in module) for i in gene_list])
         out.append(evecs.T @ v)
@@ -188,7 +195,7 @@ class PatientInteractionMatrix:
     def as_scipy_sparse_matrix(self):
 
         n = len(self.nodelist)
-        out = scipy.sparse.zeros((n**2, n**2))
+        out = scipy.sparse.csr_matrix((n**2, n**2))
 
         for i, j in self.gene_pair_indices:
             out[n * i + j, n * i + j] = 1
@@ -202,7 +209,7 @@ class DataInteractionMatrix:
         self, nodelist, mutations, disease_statuses, patient_weighting_map=None
     ):
         """
-        Creates a matr}ix of the form
+        Creates a matrix of the form
         sum_{patients} weight{patient} sum_{ij} (|i> \ tensor |j>)(<i| \ tensor <j|)
         where i,j are all pairs of genes in a particual patient,
         summed over all the patients selected, and a weight is
@@ -224,7 +231,7 @@ class DataInteractionMatrix:
             self.patient_weightings.append(patient_weighting_map[ds])
 
     def bilinear_form_magnitude(self, v, w):
-        """Applies the data matrix as bilinear form (<v| \ tensor <w|) A (|v> \ tensor |w>)"""
+        """Applies the data matrix as bilinear form (<v| ?\ tensor <w|) A (|v> \ tensor |w>)"""
         out = 0
         for pim, weight in zip(
             self.patient_interaction_matrices, self.patient_weightings
@@ -235,7 +242,7 @@ class DataInteractionMatrix:
     def as_scipy_sparse_matrix(self):
 
         n = len(self.nodelist)
-        out = scipy.sparse.zeros((n**2, n**2))
+        out = scipy.sparse.csr_matrix((n**2, n**2))
 
         for pim, weight in zip(
             self.patient_interaction_matrices, self.patient_weightings
@@ -243,6 +250,65 @@ class DataInteractionMatrix:
             out += weight * pim.as_scipy_sparse_matrix()
         return out
 
+class SelfAttractionMatrix:
+    
+    def __init__(self,nodelist):
+        self.nodelist = nodelist
+        
+    
+    def bilinear_form_magnitude(self, v, w):
+        
+        return np.dot(v**2,w**2)
+    
+    def as_scipy_sparse_matrix(self):
+        
+        node_to_index = {node: index for index, node in enumerate(self.nodelist)}
+        
+        n = len(self.nodelist)
+        out = scipy.sparse.csr_matrix((n**2, n**2))
+        
+        for node in self.nodelist:
+            i = node_to_index[node]
+            out[n * i + i, n * i + i] = 1
+
+        return out
+    
+class SumMatrix:
+    
+    def __init__(self, matrices, coefficients):
+        self.matrices     = matrices
+        self.coefficients = coefficients
+        
+        assert len(matrices) == len(coefficients)
+        
+        self.nodelist = matrices[0].nodelist
+        
+        # ensure all the matrices represent
+        # the same ordering of the nodes
+        for matrix in matrices:
+            assert self.nodelist == matrix.nodelist
+        
+        
+        
+    def bilinear_form_magnitude(self, v, w):
+        
+        out = 0
+        
+        for matrix,c in zip(self.matrices,self.coefficients):
+            out += c * matrix.bilinear_form_magnitude(v,w)
+        
+        return out
+            
+    def as_scipy_sparse_matrix(self):
+        
+
+        n = len(self.nodelist)
+        out = scipy.sparse.csr_matrix((n**2, n**2))
+        
+        for matrix,c in zip(self.matrices,self.coefficients):
+            out += c * matrix.as_scipy_sparse_matrix()
+
+        return out
 
 class GroundTruth:
 
